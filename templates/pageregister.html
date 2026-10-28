@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+    <title>Register</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <style>
+    </style>
+    </head>
+    <body>
+
+    <h1>Register</h1>
+    <br>
+    <h2>Create an Account</h2>
+    <br>
+    <p>Choose a username (3-20 letters, numbers or underscores) and a password that meets the complexity rules below.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}
+        <p class="flash">{{ message }}</p>
+      {% endfor %}
+    {% endwith %}
+    <br>
+
+    <form method="post" action="{{ url_for('register_page') }}">
+        <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" minlength="12" required>
+        </div>
+        <div>
+        <label for="confirm">Confirm Password</label>
+        <input type="password" id="confirm" name="confirm" minlength="12" required>
+        </div>
+        <div>
+        <input type="submit" class="submit" value="Register">
+        </div>
+    </form>
+
+    <br>
+    <h3>Account already exists? Log in <a href="{{ url_for('login_page') }}">Here</a> or reset password <a href="{{ url_for('reset_page') }}">Here</a></h3>
+    <br>
+
+    <br>
+    <h2>Password Complexity</h2>
+    <br>
+    <p>Passwords should meet a minimum requirement of:</p>
+    <ol>
+        <li><p>At least 12 characters in length</p></li>
+        <li><p>At least 1 uppercase character</p></li>
+        <li><p>At least 1 lowercase character</p></li>
+        <li><p>At least 1 number and 1 special character</p></li>
+    </ol>
+
+    <h3>Already registered? Log in <a href="{{ url_for('login_page') }}">Here</a></h3>
+
+    </body>
+</html>

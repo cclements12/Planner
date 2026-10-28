@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reset password</title>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='styles/styles.css') }}">
+<style>
+</style>
+</head>
+<body>
+
+<h1>Reset Password</h1>
+<br>
+<h2>Update password</h2>
+<br>
+<p>Using your existing password, enter a new password for your account.</p>
+
+{% with messages = get_flashed_messages() %}
+  {% for message in messages %}
+    <p class="flash">{{ message }}</p>
+  {% endfor %}
+{% endwith %}
+<br>
+
+<form method="post" action="{{ url_for('reset_page') }}">
+  <div>
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+  <div>
+    <label for="old_password">Old Password</label>
+    <input type="password" id="old_password" name="old_password" required>
+  </div>
+  <div>
+    <label for="new_password">New Password</label>
+    <input type="password" id="new_password" name="new_password" minlength="12" required>
+  </div>
+  <div>
+    <label for="confirm">Confirm New Password</label>
+    <input type="password" id="confirm" name="confirm" minlength="12" required>
+  </div>
+  <div>
+    <br>
+    <input type="submit" class="submit" value="Reset Password">
+  </div>
+</form>
+
+<br>
+<h2>Password Complexity</h2>
+<br>
+<p>Passwords should meet a minimum requirement of:</p>
+<ol>
+  <li><p>At least 12 characters in length</p></li>
+  <li><p>At least 1 uppercase character</p></li>
+  <li><p>At least 1 lowercase character</p></li>
+  <li><p>At least 1 number and 1 special character</p></li>
+</ol>
+
+<br>
+<h3>Back to <a href="{{ url_for('login_page') }}">Log In</a> or create account <a href="{{ url_for('register_page') }}">Here</a></h3>
+<br>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+    <title>Login</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <style>
+    </style>
+    </head>
+    <body>
+
+    <h1>Login</h1>
+    <br>
+    <br>
+    <h2>Login Portal</h2>
+    <br>
+    <p>Using the below field, enter your username and password</p>
+    <br>
+
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+         <p class="flash">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+    <br>
+
+    <form method="post" action="{{ url_for('login_page') }}">
+        <div>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+        </div>
+        <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+        <input type="submit" class="submit" value="Log In">
+        </div>
+    </form>
+    
+    <br>
+    <h3>No account? Register <a href="{{ url_for('register_page') }}">Here</a> or reset password <a href="{{ url_for('reset_page') }}">Here</a></h3>
+    <br>
+
+    <h2>Password Complexity</h2>
+    <br>
+    <p>Passwords should meet a minimum requirement of:</p>
+    <ol>
+        <li><p>At least 12 characters in length</p></li>
+        <li><p>At least 1 uppercase character</p></li>
+        <li><p>At least 1 lowercase character</p></li>
+        <li><p>At least 1 number and 1 special character</p></li>
+    </ol>
+
+    </body>
+</html>
