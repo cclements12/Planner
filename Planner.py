@@ -12,21 +12,22 @@ from passlib.hash import sha256_crypt
 
 app = Flask(__name__)
 
-
 app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 
-USER_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                         "users.txt")
+#Path to users
+USER_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),"users.txt")
 
+#username
 USERNAME_PATTERN = re.compile(r"^[A-Za-z0-9_]{3,20}$")
 
-COMMON_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                           "CommonPassword.txt")
+#Path to CommonPasswords
+COMMON_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),"CommonPassword.txt")
 
 MIN_COMMON_LENGTH = 5
 
-LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                        "failed_logins.log")
+#login failure captured
+LOG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)),"failed_logins.log")
+
 LOG_FORMAT = logging.Formatter("%(asctime)s | %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
 
 FAILED_LOGIN_LOG = logging.getLogger("failed_logins")
@@ -38,6 +39,7 @@ if not FAILED_LOGIN_LOG.handlers:  # avoid duplicate lines if re-imported
     FAILED_LOGIN_LOG.addHandler(_handler)
 
 
+#conditional checks for failed password complexity
 def check_password_complexity(password):
     """Return a list of unmet password rules (an empty list means valid)."""
     problems = []
@@ -53,7 +55,7 @@ def check_password_complexity(password):
         problems.append("contain at least 1 special character")
     return problems
 
-
+#loads list of common passwords from COMMON_FILE variable
 def load_common_passwords():
     """Return the common passwords (lowercase) long enough to search for."""
 
@@ -65,7 +67,6 @@ def load_common_passwords():
 
 #required after declaring load_common_passwords
 COMMON_PASSWORDS = load_common_passwords()
-
 
 def is_common_password(password):
     """Return True if the password is built from a common password."""
@@ -192,7 +193,7 @@ def validate_reset(username, old_password, new_password, confirm):
 
     return errors
 
-#code imported from CSMC for login page:
+#APP ROUTES / DEFINES PAGES FOR APP
 
 @app.route("/register", methods=["GET", "POST"])
 def register_page():
@@ -271,7 +272,6 @@ def logout_page():
 #TESTING APP ROUTE! initializes DB
 @app.route("/initialize")
 def init_db():
-
 
     #Creates variable for connected database
     sql_database = sqlite3.connect("planner_data.db")
