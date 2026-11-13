@@ -621,6 +621,24 @@ def update_task(task_id):
     return redirect(url_for("main_page"))
 
 
+@app.route("/tasks/<int:task_id>/delete", methods=["POST"])
+@login_required
+def delete_task(task_id):
+    '''Delete a task card (POST only, so a link or crawler can never delete one)'''
+
+    sql_database = get_db()
+
+    # get_db() turns foreign keys on, so the card's task_users rows cascade away
+    cursor = sql_database.execute("DELETE FROM messages WHERE id = ?", (task_id,))
+
+    sql_database.commit()
+    deleted = cursor.rowcount
+    sql_database.close()
+
+    flash("Task deleted." if deleted else "That task does not exist.")
+    return redirect(url_for("main_page"))
+
+
 @app.route("/project_members", methods=["POST"])
 @login_required
 def add_project_member():
