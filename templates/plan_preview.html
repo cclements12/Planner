@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Review Project Plan</title>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; vertical-align: top; font-size: .9rem; }
+    label { display: block; margin-top: .75rem; font-size: .9rem; }
+    input[type="text"] { width: 100%; max-width: 320px; box-sizing: border-box; padding: .45rem; margin-top: .25rem; font: inherit; }
+    button { padding: .6rem 1.2rem; font: inherit; cursor: pointer; }
+    small { color: #666; }
+  </style>
+</head>
+<body>
+
+  <h1>Review Project Plan</h1>
+  <p><strong>{{ project_name }}</strong> &middot; starts {{ project_start }}</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+      <p class="flash">{{ message }}</p>
+    {% endfor %}
+  {% endwith %}
+
+  <p>Nothing has been saved yet. Untick any task you don't want, then save.
+     Tasks are saved in this order, unassigned, with status "Not Started".</p>
+
+  <form action="{{ url_for('save_plan') }}" method="post">
+    <input type="hidden" name="plan_json" value="{{ plan_json }}">
+    <input type="hidden" name="project_name" value="{{ project_name }}">
+    <input type="hidden" name="project_start" value="{{ project_start }}">
+
+    <label>Group ID for this project <small>(letters, numbers, hyphens, underscores)</small>
+      <input type="text" name="group_id" value="{{ group_id }}" maxlength="40" required>
+    </label>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Keep</th>
+          <th>#</th>
+          <th>Task</th>
+          <th>Priority</th>
+          <th>Start</th>
+          <th>Due</th>
+          <th>Description</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td><input type="checkbox" name="include" value="{{ loop.index0 }}"
+                     {{ 'checked' if selected is none or loop.index0 in selected }}></td>
+          <td>{{ loop.index }}</td>
+          <td>{{ row.task_name }}</td>
+          <td>{{ row.task_priority }}</td>
+          <td>{{ row.start_date }}</td>
+          <td>{{ row.due_date }}</td>
+          <td>{{ row.task_description }}</td>
+          <td>{{ row.task_notes }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <button type="submit">Save plan</button>
+    <a href="{{ url_for('new_plan_page') }}" style="margin-left:1rem">Start over</a>
+  </form>
+
+</body>
+</html>
