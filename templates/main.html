@@ -2,10 +2,72 @@
 <html>
     <head>
     <title>Main Page</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
     </head>
     <body>
         <h1>Main</h1>
         <br>
-        <p>Hello World!</p>
+
+        {% with messages = get_flashed_messages() %}
+            {% for message in messages %}
+            <p class="flash">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <h2>Project Tasks</h2>
+        <p><a href="{{ url_for('new_task_page') }}">+ Add task</a> |
+        <a href="{{ url_for('new_plan_page') }}">Generate New plan</a></p>
+        <br>
+
+        {% if tasks %}
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Task</th>
+                    <th>Group</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Assigned</th>
+                    <th>Start</th>
+                    <th>Due</th>
+                    <th>Done</th>
+                    <th>Description</th>
+                    <th>Notes</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ task["task_name"] }}</td>
+                    <td>{{ task["group_id"] }}</td>
+                    <td>{{ task["task_status"] }}</td>
+                    <td>{{ task["task_priority"] }}</td>
+                    <td>{{ task["task_assigned_user"] }}</td>
+                    <td>{{ task["start_date"] or "" }}</td>
+                    <td>{{ task["due_date"] or "" }}</td>
+                    <td>{{ "Yes" if task["completed"] else "No" }}</td>
+                    <td>{{ task["task_description"] }}</td>
+                    <td>{{ task["task_notes"] }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_task_page', task_id=task['id']) }}">Edit</a>
+                        <form method="post" action="{{ url_for('delete_task', task_id=task['id']) }}"
+                              style="display:inline"
+                              onsubmit="return confirm('Delete this task? This cannot be undone.');">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No tasks yet. Visit <a href="{{ url_for('init_db') }}">/initialize</a> to create the database with a sample task.</p>
+        {% endif %}
+
+        <br>
+        <p><a href="{{ url_for('logout_page') }}">Log out</a></p>
     </body>
 </html>

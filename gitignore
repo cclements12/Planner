@@ -1,0 +1,12 @@
+# Secrets: never commit these
+local_secrets.py
+
+# Local data and logs
+planner_data.db
+users.txt
+failed_logins.log
+
+# Python / build output
+__pycache__/
+*.pyc
+antenv/
