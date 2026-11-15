@@ -1,73 +1,51 @@
 <!DOCTYPE html>
-<html>
-    <head>
-    <title>Main Page</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
-    </head>
-    <body>
-        <h1>Main</h1>
-        <br>
-
-        {% with messages = get_flashed_messages() %}
-            {% for message in messages %}
-            <p class="flash">{{ message }}</p>
-            {% endfor %}
-        {% endwith %}
-
-        <h2>Project Tasks</h2>
-        <p><a href="{{ url_for('new_task_page') }}">+ Add task</a> |
-        <a href="{{ url_for('new_plan_page') }}">Generate New plan</a></p>
-        <br>
-
-        {% if tasks %}
-        <table border="1" cellpadding="6" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Task</th>
-                    <th>Group</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Assigned</th>
-                    <th>Start</th>
-                    <th>Due</th>
-                    <th>Done</th>
-                    <th>Description</th>
-                    <th>Notes</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for task in tasks %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td>{{ task["task_name"] }}</td>
-                    <td>{{ task["group_id"] }}</td>
-                    <td>{{ task["task_status"] }}</td>
-                    <td>{{ task["task_priority"] }}</td>
-                    <td>{{ task["task_assigned_user"] }}</td>
-                    <td>{{ task["start_date"] or "" }}</td>
-                    <td>{{ task["due_date"] or "" }}</td>
-                    <td>{{ "Yes" if task["completed"] else "No" }}</td>
-                    <td>{{ task["task_description"] }}</td>
-                    <td>{{ task["task_notes"] }}</td>
-                    <td>
-                        <a href="{{ url_for('edit_task_page', task_id=task['id']) }}">Edit</a>
-                        <form method="post" action="{{ url_for('delete_task', task_id=task['id']) }}"
-                              style="display:inline"
-                              onsubmit="return confirm('Delete this task? This cannot be undone.');">
-                            <button type="submit">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p>No tasks yet. Visit <a href="{{ url_for('init_db') }}">/initialize</a> to create the database with a sample task.</p>
-        {% endif %}
-
-        <br>
-        <p><a href="{{ url_for('logout_page') }}">Log out</a></p>
-    </body>
-</html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard | Planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}">
+</head>
+<body>
+<div class="app-layout">
+  {% set active_page = 'dashboard' %}{% include '_sidebar.html' %}
+  <main class="page-main">
+    <header class="topbar"><span class="breadcrumb">Workspace / <strong>Dashboard</strong></span><span class="topbar-right"><span class="topbar-dot" aria-hidden="true"></span> Project workspace</span></header>
+    <section class="page-heading">
+      <div><span class="eyebrow">Project overview</span><h1>Make every project count<span class="accent">.</span></h1><p>View tasks, track assignments, and turn your next idea into an actionable plan.</p></div>
+      <div class="action-group"><a class="btn btn-secondary" href="{{ url_for('new_task_page') }}">+ Add Task</a><a class="btn btn-gold" href="{{ url_for('new_plan_page') }}">✦ Generate AI Plan</a></div>
+    </section>
+    {% include '_messages.html' %}
+    <section class="summary-grid" aria-label="Workspace summary">
+      <div class="summary-card"><span class="summary-label">Total tasks</span><div class="summary-value">{{ tasks|length }}</div><div class="summary-caption">Across your project workspace</div></div>
+      <div class="summary-card"><span class="summary-label">Task management</span><div class="summary-value accent">Organize</div><div class="summary-caption">Assign, prioritize, and track</div></div>
+      <div class="summary-card"><span class="summary-label">AI-powered planning</span><div class="summary-value accent">Generate</div><div class="summary-caption">Draft project plans with Gemini</div></div>
+    </section>
+    <section class="panel" aria-labelledby="task-list-title">
+      <div class="panel-heading"><div><h2 id="task-list-title">Project tasks</h2><p>All tasks in creation order</p></div><span class="pill">{{ tasks|length }} total</span></div>
+      {% if tasks %}
+      <div class="table-scroll"><table>
+        <thead><tr><th>#</th><th>Task</th><th>Group</th><th>Status</th><th>Priority</th><th>Assigned</th><th>Start</th><th>Due</th><th>Done</th><th>Description</th><th>Notes</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td class="task-name">{{ task['task_name'] }}</td>
+          <td>{{ task['group_id'] }}</td>
+          <td><span class="pill {{ 'success' if task['task_status'] == 'Done' else 'progress' if task['task_status'] == 'In Progress' else '' }}">{{ task['task_status'] }}</span></td>
+          <td><span class="pill {{ task['task_priority']|lower if task['task_priority'] in ['Low','Medium','High'] else '' }}">{{ task['task_priority'] }}</span></td>
+          <td>{{ task['task_assigned_user'] }}</td>
+          <td>{{ task['start_date'] or '—' }}</td><td>{{ task['due_date'] or '—' }}</td>
+          <td>{{ 'Yes' if task['completed'] else 'No' }}</td>
+          <td class="task-details">{{ task['task_description'] }}</td><td class="task-details">{{ task['task_notes'] }}</td>
+          <td><div class="table-actions"><a class="btn btn-secondary btn-small" href="{{ url_for('edit_task_page', task_id=task['id']) }}">Edit</a><form method="post" action="{{ url_for('delete_task', task_id=task['id']) }}" onsubmit="return confirm('Delete this task? This cannot be undone.');"><button class="btn-danger" type="submit">Delete</button></form></div></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table></div>
+      {% else %}
+      <div class="empty"><span class="empty-icon" aria-hidden="true">▤</span><h2>No tasks yet</h2><p>Create a task to start tracking work, or generate a project plan with AI.</p><div class="action-group" style="justify-content:center"><a class="btn btn-secondary" href="{{ url_for('new_task_page') }}">Add your first task</a><a class="btn btn-gold" href="{{ url_for('new_plan_page') }}">Generate a plan</a></div><p style="margin-top:22px;font-size:.8rem">First time setting up? The database may need initialization at <code>/initialize</code>.</p></div>
+      {% endif %}
+    </section>
+  </main>
+</div>
+</body></html>

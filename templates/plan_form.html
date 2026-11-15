@@ -1,61 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Generate Project Plan</title>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/styles.css') }}">
-  <style>
-    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
-    fieldset { margin-bottom: 1.5rem; border: 1px solid #ccc; border-radius: 6px; }
-    legend { font-weight: 600; padding: 0 .4rem; }
-    label { display: block; margin-top: .75rem; font-size: .9rem; }
-    input, textarea { width: 100%; box-sizing: border-box; padding: .45rem; margin-top: .25rem; font: inherit; }
-    .row { display: flex; gap: 1rem; }
-    .row > label { flex: 1; }
-    button { margin-top: 1rem; padding: .6rem 1.2rem; font: inherit; cursor: pointer; }
-    small { color: #666; }
-  </style>
-</head>
-<body>
-
-  <h1>Generate Project Plan</h1>
-  <p><a href="{{ url_for('main_page') }}">&larr; Back to task list</a></p>
-
-  {% with messages = get_flashed_messages() %}
-    {% for message in messages %}
-      <p class="flash">{{ message }}</p>
-    {% endfor %}
-  {% endwith %}
-
-  <p>Describe your project and the AI will draft a task plan. You can review it
-     before anything is saved. The plan is saved as its own project (group ID).</p>
-
-  <form action="{{ url_for('generate_plan') }}" method="post"
-        onsubmit="this.querySelector('button').disabled = true; this.querySelector('button').textContent = 'Generating... (can take up to a minute)';">
-    <fieldset>
-      <legend>Project</legend>
-
-      <label>Project name
-        <input type="text" name="project_name" maxlength="80" value="{{ form.get('project_name', '') }}" required>
-      </label>
-
-      <label>Description <small>(goals, scope, constraints, team, anything that helps)</small>
-        <textarea name="description" rows="8" maxlength="3000" required>{{ form.get('description', '') }}</textarea>
-      </label>
-
-      <div class="row">
-        <label>Project start date <small>(optional, defaults to today)</small>
-          <input type="date" name="start_date" value="{{ form.get('start_date', '') }}">
-        </label>
-        <label>Target length in weeks <small>(optional)</small>
-          <input type="number" name="weeks" min="1" max="104" step="1" value="{{ form.get('weeks', '') }}">
-        </label>
-      </div>
-
-      <button type="submit">Generate plan</button>
-    </fieldset>
-  </form>
-
-</body>
-</html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Generate Project Plan | Planner</title><link rel="stylesheet" href="{{ url_for('static', filename='styles/styles.css') }}"></head>
+<body><div class="app-layout">
+{% set active_page = 'plan' %}{% include '_sidebar.html' %}
+<main class="page-main"><header class="topbar"><span class="breadcrumb">Workspace / AI Planner / <strong>Generate</strong></span><a href="{{ url_for('main_page') }}">← Back to dashboard</a></header>
+<div class="page-heading"><div><span class="eyebrow">Powered by AI</span><h1>Turn ideas into action<span class="accent">.</span></h1><p>Describe your project and let AI draft a practical task plan. You'll review every task before anything is saved.</p></div></div>
+{% include '_messages.html' %}
+<div class="panel form-panel">
+<form action="{{ url_for('generate_plan') }}" method="post" onsubmit="const button=this.querySelector('button[type=submit]'); button.disabled=true; button.textContent='Generating…';">
+<fieldset><legend>Project information</legend>
+  <label>Project name <input type="text" name="project_name" maxlength="80" value="{{ form.get('project_name','') }}" placeholder="e.g. Launch a new product" required></label>
+  <label>Project description <small>(goals, scope, constraints, team, and requirements)</small><textarea name="description" rows="8" maxlength="3000" placeholder="Explain what you want to build and what success looks like…" required>{{ form.get('description','') }}</textarea></label>
+  <div class="form-row"><label>Start date <small>(optional, defaults to today)</small><input type="date" name="start_date" value="{{ form.get('start_date','') }}"></label><label>Target length <small>(weeks, optional)</small><input type="number" name="weeks" min="1" max="104" step="1" value="{{ form.get('weeks','') }}" placeholder="e.g. 8"></label></div>
+  <div class="mini-note">✦ AI generation can take up to a minute. The generated plan is only saved after you review and confirm it.</div>
+  <div class="form-footer" style="margin-top:19px"><button type="submit">✦ Generate project plan</button><a class="btn btn-secondary" href="{{ url_for('main_page') }}">Cancel</a></div>
+</fieldset></form>
+</div></main></div></body></html>
