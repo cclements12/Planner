@@ -10,3 +10,5 @@ Use "flask -A Planner run" from the project's root directory to run the project 
 Requires "pip install passlib" and "pip install requests" for password encryption capabilities
 
 Database initialized through http://127.0.0.1:5000/initialize app route and messages printed by http://127.0.0.1:5000/messages for testing
+
+To enable AI functions, the API key must be added for Google Gemini within the local_secrets.py, or passed as an environmental variable through Azure
